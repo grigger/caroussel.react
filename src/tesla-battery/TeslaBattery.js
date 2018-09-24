@@ -47,15 +47,25 @@ export class TeslaBattery extends Component {
   }
 
   incrementSpeed = () => {
-
+    const {speed} = this.state
+    if (speed.value < speed.max) {
+        this.setState({speed: {...this.state.speed, value: speed.value + speed.step}})
+    }
   }
   incrementTemperature = () => {
-
+    const {temperature} = this.state
+    if (temperature.value < temperature.max) {
+        this.setState({temperature: {...this.state.temperature, value: temperature.value + temperature.step}})
+    }
   }
 
   decrementSpeed = () => {
-
+      const {speed} = this.state
+      if (speed.value > speed.min) {
+          this.setState({speed: {...this.state.speed, value: speed.value - speed.step}})
+      }
   }
+
   decrementTemperature = () => {
     const {temperature} = this.state
     if (temperature.value > temperature.min) {
@@ -105,7 +115,7 @@ export class TeslaBattery extends Component {
         {/* End TeslaCarComponent */}
 
         {/* TeslaStatsComponent */}
-        <div class="tesla-stats">
+        <div className="tesla-stats">
           <ul>
             {/* This is working well in the first place you won't have to touch it */}
             {models.map(model => {
@@ -116,7 +126,7 @@ export class TeslaBattery extends Component {
                 model,
                 miles,
               }
-            }).map(stat => <li>
+            }).map((stat, index) => <li key={index}>
               {/* the stat.model here under must be lowercased */}
               <div className={`tesla-stats-icon tesla-stats-icon--${stat.model}`} />
                 <p>{stat.miles}
@@ -128,28 +138,28 @@ export class TeslaBattery extends Component {
         </div>
         {/* End TeslaStatsComponent */}
 
-        <div class="tesla-controls cf">
+        <div className="tesla-controls cf">
           {/* TeslaCounterComponent for speed */}
           <div className="tesla-counter">
             <p className="tesla-counter__title">Speed</p>
             <div className="tesla-counter__container cf">
               <div className="tesla-counter__item" tabIndex="0"
-                   blur={"this.onBlurSpeed"}
-                   @Focus={this.onFocusSpeed}>
+                   onBlur={this.onBlurSpeed}
+                   onFocus={this.onFocusSpeed}>
                 <p className="tesla-counter__number">
-                  speed.value
+                  {speed.value}
                   <span>mph</span>
                 </p>
                 <div className="tesla-counter__controls"
                      tabIndex="-1">
                   <button tabIndex="-1"
                           type="button"
-                          {(click)}="this.incrementSpeed"
-                          disabled="speed.value === speed.max"/>
+                          onClick={this.incrementSpeed}
+                          disabled={speed.value === speed.max}/>
                   <button tabIndex="-1"
                           type="button"
-                          onclick={this.decrementSpeed()}
-                          disabled="speed.value === speed.min"/>
+                          onClick={this.decrementSpeed}
+                          disabled={speed.value === speed.min}/>
                 </div>
               </div>
             </div>
@@ -163,10 +173,10 @@ export class TeslaBattery extends Component {
               <div className="tesla-counter__container cf">
                 <div className="tesla-counter__item"
                      tabIndex="0"
-                     onBlur={() => this.onBlurTemperature}
-                     onFocus={this.onFocusTemperature()}>
+                     onBlur={this.onBlurTemperature}
+                     onFocus={this.onFocusTemperature}>
                   <p className="tesla-counter__number">
-                    {{temperature.value}}
+                    {temperature.value}
                     <span>°</span>
                   </p>
                   <div className="tesla-counter__controls"
@@ -193,7 +203,7 @@ export class TeslaBattery extends Component {
                 <input type="checkbox"
                        name="climate"
                        checked={climate.value}
-                       onClick={this.changeClimate}
+                       onChange={this.changeClimate}
                        onBlur={this.onBlurClimate}
                        onFocus={this.onFocusClimate}/>
               </label>
@@ -205,21 +215,23 @@ export class TeslaBattery extends Component {
           <div className="tesla-wheels">
             <p className="tesla-wheels__title">Wheels</p>
             <div className="tesla-wheels__container cf">
-                <label
-                  *ngFor="size of wheels.sizes"
-                    key={size}
-                    className={`${wheels.value === size ? 'tesla-wheels__item--active ': ' '}${wheels.focused === size ? 'tesla-wheels__item--focused ' : ' '}tesla-wheels__item tesla-wheels__item--${size}`}>
-                  <input type="radio"
-                         name="wheelsize"
-                         value={size}
-                         onBlur={this.onBlurWheels}
-                         onClick={() => this.changeWheelSize(size)}
-                         onFocus={() => this.onFocusWheels(size)}
-                         defaultChecked={wheels.value === size}/>
-                  <p>
-                    {size}"
-                  </p>
-                </label>
+                {wheels.sizes.map((size) =>
+                    <label
+                        key={size}
+                        className={`${wheels.value === size ? 'tesla-wheels__item--active ': ' '}${wheels.focused === size ? 'tesla-wheels__item--focused ' : ' '}tesla-wheels__item tesla-wheels__item--${size}`}>
+                      <input type="radio"
+                             name="wheelsize"
+                             value={size}
+                             onBlur={this.onBlurWheels}
+                             onClick={() => this.changeWheelSize(size)}
+                             onFocus={() => this.onFocusWheels(size)}
+                             defaultChecked={wheels.value === size}/>
+                      <p>
+                          {size}"
+                      </p>
+                    </label>
+                )}
+
             </div>
           </div>
           {/* End TeslaWheelsComponent */}
