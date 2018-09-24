@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import teslaService from "./tesla-battery.service";
 import {TeslaCar} from "./components/TeslaCar";
+import {TeslaStats} from "./components/TeslaStats";
+import {TeslaCounter} from "./components/TeslaCounter";
 
 export class TeslaBattery extends Component {
   state = {
@@ -45,18 +47,17 @@ export class TeslaBattery extends Component {
   onFocusTemperature = () => {
     this.setState({temperature: {...this.state.temperature, focused: true}})
   }
-
-  incrementSpeed = () => {
-    const {speed} = this.state
-    if (speed.value < speed.max) {
-        this.setState({speed: {...this.state.speed, value: speed.value + speed.step}})
-    }
-  }
   incrementTemperature = () => {
     const {temperature} = this.state
     if (temperature.value < temperature.max) {
         this.setState({temperature: {...this.state.temperature, value: temperature.value + temperature.step}})
     }
+  }
+  incrementSpeed = () => {
+      const {speed} = this.state
+      if (speed.value < speed.max) {
+          this.setState({speed: {...this.state.speed, value: speed.value + speed.step}})
+      }
   }
 
   decrementSpeed = () => {
@@ -113,60 +114,28 @@ export class TeslaBattery extends Component {
 
         {/* TeslaCarComponent */}
         <TeslaCar wheels={wheels}
-                   speed={speed.value}/>
+                  speed={speed.value} />
         {/* End TeslaCarComponent */}
 
-        {/* TeslaStatsComponent */}
-        <div className="tesla-stats">
-          <ul>
-            {/* This is working well in the first place you won't have to touch it */}
-            {models.map(model => {
-              const miles = metrics[model][wheels.value][
-                climate.value ? 'on' : 'off'
-                ].speed[speed.value][temperature.value];
-              console.log(model);
-              return {
-                model,
-                miles,
-              }
-            }).map((stat, index) => <li key={index}>
-              {/* the stat.model here under must be lowercased */}
-              <div className={`tesla-stats-icon tesla-stats-icon--${stat.model.toLowerCase()}`} />
-                <p>{stat.miles}
-                  <span>MI</span>
-                </p>
-              </li>
-            )}
-          </ul>
-        </div>
+        /* TeslaStatsComponent */}
+        <TeslaStats
+            models={models}
+            metrics={metrics}
+            speed={speed}
+            temperature={temperature}
+            climate={climate}
+            wheels={wheels} />
         {/* End TeslaStatsComponent */}
 
         <div className="tesla-controls cf">
           {/* TeslaCounterComponent for speed */}
-          <div className="tesla-counter">
-            <p className="tesla-counter__title">Speed</p>
-            <div className="tesla-counter__container cf">
-              <div className="tesla-counter__item" tabIndex="0"
-                   onBlur={this.onBlurSpeed}
-                   onFocus={this.onFocusSpeed}>
-                <p className="tesla-counter__number">
-                  {speed.value}
-                  <span>mph</span>
-                </p>
-                <div className="tesla-counter__controls"
-                     tabIndex="-1">
-                  <button tabIndex="-1"
-                          type="button"
-                          onClick={this.incrementSpeed}
-                          disabled={speed.value === speed.max}/>
-                  <button tabIndex="-1"
-                          type="button"
-                          onClick={this.decrementSpeed}
-                          disabled={speed.value === speed.min}/>
-                </div>
-              </div>
-            </div>
-          </div>
+          <TeslaCounter
+            speed={speed}
+            incrementSpeed={this.incrementSpeed}
+            decrementSpeed={this.decrementSpeed}
+            onBlurSpeed={this.onBlurSpeed}
+            onFocusSpeed={this.onFocusSpeed}
+          />
           {/* End TeslaCounterComponent for speed */}
           <div className="tesla-climate cf">
 
