@@ -74,6 +74,8 @@ export class TeslaBattery extends Component {
   }
 
   changeClimate = () => {
+    const {climate} = this.state;
+    this.setState({climate: {...this.state.climate, value: !climate.value}});
 
   }
   onBlurClimate = () => {
@@ -111,7 +113,7 @@ export class TeslaBattery extends Component {
 
         {/* TeslaCarComponent */}
         <TeslaCar wheels={wheels}
-                   speed="speed.value"/>
+                   speed={speed.value}/>
         {/* End TeslaCarComponent */}
 
         {/* TeslaStatsComponent */}
@@ -122,13 +124,14 @@ export class TeslaBattery extends Component {
               const miles = metrics[model][wheels.value][
                 climate.value ? 'on' : 'off'
                 ].speed[speed.value][temperature.value];
+              console.log(model);
               return {
                 model,
                 miles,
               }
             }).map((stat, index) => <li key={index}>
               {/* the stat.model here under must be lowercased */}
-              <div className={`tesla-stats-icon tesla-stats-icon--${stat.model}`} />
+              <div className={`tesla-stats-icon tesla-stats-icon--${stat.model.toLowerCase()}`} />
                 <p>{stat.miles}
                   <span>MI</span>
                 </p>
